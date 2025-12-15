@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\OrderMatched;
 use App\Http\Controllers\Controller;
 use App\Models\Asset;
 use App\Models\Order;
@@ -294,7 +295,7 @@ class OrderController extends Controller
         $sellOrder->save();
 
         // Create trade record
-        Trade::create([
+        $trade = Trade::create([
             'buy_order_id' => $buyOrder->id,
             'sell_order_id' => $sellOrder->id,
             'buyer_id' => $buyer->id,
@@ -306,6 +307,8 @@ class OrderController extends Controller
             'commission' => $commission,
         ]);
 
-        // TODO: Broadcast OrderMatched event via Pusher
+        // Broadcast OrderMatched event to both parties
+        event(new OrderMatched($trade, $buyer->id));
+        event(new OrderMatched($trade, $seller->id));
     }
 }
