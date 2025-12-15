@@ -3,12 +3,12 @@ import { onMounted, watch } from 'vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { useTrading } from '@/composables/useTrading';
+import { useTrading, type Trade } from '@/composables/useTrading';
+import { useToast } from '@/composables/useToast';
 import OrderForm from '@/components/trading/OrderForm.vue';
 import WalletBalance from '@/components/trading/WalletBalance.vue';
 import Orderbook from '@/components/trading/Orderbook.vue';
 import OrderHistory from '@/components/trading/OrderHistory.vue';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -16,6 +16,15 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/trading',
     },
 ];
+
+const toast = useToast();
+
+function handleOrderMatched(trade: Trade) {
+    toast.success(
+        'Order Filled!',
+        `${trade.side.toUpperCase()} ${trade.amount} ${trade.symbol} @ $${parseFloat(trade.price).toFixed(2)}`
+    );
+}
 
 const {
     profile,
@@ -29,7 +38,7 @@ const {
     fetchOrderbook,
     placeOrder,
     cancelOrder,
-} = useTrading();
+} = useTrading(handleOrderMatched);
 
 async function handlePlaceOrder(data: {
     symbol: string;
@@ -37,11 +46,24 @@ async function handlePlaceOrder(data: {
     price: string;
     amount: string;
 }) {
-    await placeOrder(data);
+    const result = await placeOrder(data);
+    if (result) {
+        toast.success(
+            'Order Placed',
+            `${data.side.toUpperCase()} ${data.amount} ${data.symbol} @ $${data.price}`
+        );
+    } else if (error.value) {
+        toast.error('Order Failed', error.value);
+    }
 }
 
 async function handleCancelOrder(orderId: number) {
-    await cancelOrder(orderId);
+    const success = await cancelOrder(orderId);
+    if (success) {
+        toast.success('Order Cancelled', 'Your order has been cancelled successfully');
+    } else if (error.value) {
+        toast.error('Cancel Failed', error.value);
+    }
 }
 
 // Fetch initial data
@@ -57,6 +79,13 @@ onMounted(async () => {
 watch(selectedSymbol, (newSymbol) => {
     fetchOrderbook(newSymbol);
 });
+
+// Watch for errors
+watch(error, (newError) => {
+    if (newError) {
+        toast.error('Error', newError);
+    }
+});
 </script>
 
 <template>
@@ -64,11 +93,6 @@ watch(selectedSymbol, (newSymbol) => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
-            <!-- Error Alert -->
-            <Alert v-if="error" variant="destructive">
-                <AlertDescription>{{ error }}</AlertDescription>
-            </Alert>
-
             <div class="grid gap-4 lg:grid-cols-12">
                 <!-- Left Column: Order Form & Wallet -->
                 <div class="lg:col-span-4 space-y-4">

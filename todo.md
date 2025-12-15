@@ -50,10 +50,10 @@
   - [x] Update balance, assets, and order list instantly
 
 ## Bonus Features (Optional)
-- [ ] Order filtering (by symbol/side/status)
-- [ ] Toast notifications/alerts
-- [ ] Volume calculation preview
-- [ ] Store executed trades in `trades` table
+- [x] Order filtering (by symbol/side/status)
+- [x] Toast notifications/alerts
+- [x] Volume calculation preview
+- [x] Store executed trades in `trades` table
 
 ## Final Steps
 - [ ] Write README.md with setup instructions
