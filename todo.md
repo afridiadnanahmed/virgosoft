@@ -56,7 +56,7 @@
 - [x] Store executed trades in `trades` table
 
 ## Final Steps
-- [ ] Write README.md with setup instructions
+- [x] Write README.md with setup instructions
 - [ ] Clean up code & security validation
 - [ ] Meaningful git commits
 - [ ] Push to GitHub/GitLab
