@@ -4,7 +4,7 @@
 - [x] Initialize Laravel project
 - [x] Initialize Vue.js frontend
 - [x] Configure database (MySQL/PostgreSQL)
-- [ ] Configure Pusher for real-time broadcasting
+- [x] Configure Pusher for real-time broadcasting
 
 ## Backend - Database & Models
 - [x] Create `users` migration (add `balance` column)
@@ -30,9 +30,9 @@
 - [x] Ensure atomic execution & race safety (database transactions/locks)
 
 ## Backend - Real-Time Integration
-- [ ] Create `OrderMatched` event
-- [ ] Configure private channels (`private-user.{id}`)
-- [ ] Broadcast on successful match
+- [x] Create `OrderMatched` event
+- [x] Configure private channels (`private-user.{id}`)
+- [x] Broadcast on successful match
 
 ## Frontend - Vue.js
 - [ ] Setup authentication (Login/Register/Logout)
