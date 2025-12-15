@@ -35,19 +35,19 @@
 - [x] Broadcast on successful match
 
 ## Frontend - Vue.js
-- [ ] Setup authentication (Login/Register/Logout)
-- [ ] Create Limit Order Form component
-  - [ ] Symbol dropdown (BTC/ETH)
-  - [ ] Side selector (Buy/Sell)
-  - [ ] Price & Amount inputs
-  - [ ] Place Order button
-- [ ] Create Orders & Wallet Overview screen
-  - [ ] Display USD and Asset balances
-  - [ ] Display all orders (open/filled/cancelled)
-  - [ ] Display Orderbook for selected symbol
-- [ ] Integrate Pusher/Laravel Echo for real-time updates
-  - [ ] Listen for `OrderMatched` event
-  - [ ] Update balance, assets, and order list instantly
+- [x] Setup authentication (Login/Register/Logout) - Already configured with Fortify
+- [x] Create Limit Order Form component
+  - [x] Symbol dropdown (BTC/ETH)
+  - [x] Side selector (Buy/Sell)
+  - [x] Price & Amount inputs
+  - [x] Place Order button
+- [x] Create Orders & Wallet Overview screen
+  - [x] Display USD and Asset balances
+  - [x] Display all orders (open/filled/cancelled)
+  - [x] Display Orderbook for selected symbol
+- [x] Integrate Pusher/Laravel Echo for real-time updates
+  - [x] Listen for `OrderMatched` event
+  - [x] Update balance, assets, and order list instantly
 
 ## Bonus Features (Optional)
 - [ ] Order filtering (by symbol/side/status)
