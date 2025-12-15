@@ -11,6 +11,8 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 
+const COMMISSION_RATE = 0.015; // 1.5%
+
 const props = defineProps<{
     loading: boolean;
     balance: string;
@@ -31,15 +33,44 @@ const symbols = ['BTC', 'ETH'];
 const totalValue = computed(() => {
     const p = parseFloat(price.value) || 0;
     const a = parseFloat(amount.value) || 0;
-    return (p * a).toFixed(2);
+    return p * a;
+});
+
+const commission = computed(() => {
+    return totalValue.value * COMMISSION_RATE;
+});
+
+const netValue = computed(() => {
+    if (side.value === 'buy') {
+        // Buyer pays total (commission deducted from seller)
+        return totalValue.value;
+    } else {
+        // Seller receives total minus commission
+        return totalValue.value - commission.value;
+    }
 });
 
 const availableBalance = computed(() => {
     if (side.value === 'buy') {
-        return `$${parseFloat(props.balance || '0').toFixed(2)} USD`;
+        return parseFloat(props.balance || '0');
     }
     const asset = props.assets?.find(a => a.symbol === symbol.value);
-    return `${parseFloat(asset?.available || '0').toFixed(8)} ${symbol.value}`;
+    return parseFloat(asset?.available || '0');
+});
+
+const availableBalanceFormatted = computed(() => {
+    if (side.value === 'buy') {
+        return `$${availableBalance.value.toFixed(2)} USD`;
+    }
+    return `${availableBalance.value.toFixed(8)} ${symbol.value}`;
+});
+
+const hasSufficientBalance = computed(() => {
+    if (!price.value || !amount.value) return true;
+    if (side.value === 'buy') {
+        return availableBalance.value >= totalValue.value;
+    }
+    return availableBalance.value >= parseFloat(amount.value);
 });
 
 function handleSubmit() {
@@ -126,14 +157,35 @@ function handleSubmit() {
                     />
                 </div>
 
-                <div class="rounded-md bg-muted p-3 text-sm">
+                <!-- Volume Calculation Preview -->
+                <div class="rounded-md bg-muted p-3 text-sm space-y-2">
                     <div class="flex justify-between">
-                        <span class="text-muted-foreground">Total:</span>
-                        <span class="font-medium">${{ totalValue }} USD</span>
+                        <span class="text-muted-foreground">Volume:</span>
+                        <span class="font-medium">${{ totalValue.toFixed(2) }} USD</span>
                     </div>
-                    <div class="flex justify-between mt-1">
+                    <div class="flex justify-between">
+                        <span class="text-muted-foreground">Commission (1.5%):</span>
+                        <span class="font-medium text-orange-500">${{ commission.toFixed(2) }} USD</span>
+                    </div>
+                    <div class="flex justify-between border-t border-border pt-2">
+                        <span class="text-muted-foreground">
+                            {{ side === 'buy' ? 'You Pay:' : 'You Receive:' }}
+                        </span>
+                        <span class="font-bold">
+                            ${{ side === 'buy' ? totalValue.toFixed(2) : netValue.toFixed(2) }} USD
+                        </span>
+                    </div>
+                    <div class="flex justify-between">
                         <span class="text-muted-foreground">Available:</span>
-                        <span class="font-medium">{{ availableBalance }}</span>
+                        <span
+                            class="font-medium"
+                            :class="hasSufficientBalance ? 'text-green-500' : 'text-red-500'"
+                        >
+                            {{ availableBalanceFormatted }}
+                        </span>
+                    </div>
+                    <div v-if="!hasSufficientBalance && (price && amount)" class="text-xs text-red-500 mt-1">
+                        Insufficient {{ side === 'buy' ? 'USD balance' : `${symbol} balance` }}
                     </div>
                 </div>
 
@@ -141,7 +193,7 @@ function handleSubmit() {
                     type="submit"
                     class="w-full"
                     :class="side === 'buy' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'"
-                    :disabled="loading || !price || !amount"
+                    :disabled="loading || !price || !amount || !hasSufficientBalance"
                 >
                     {{ loading ? 'Processing...' : `${side === 'buy' ? 'Buy' : 'Sell'} ${symbol}` }}
                 </Button>

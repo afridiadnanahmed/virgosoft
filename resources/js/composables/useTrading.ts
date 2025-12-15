@@ -44,7 +44,7 @@ export interface OrderbookData {
     sell_orders: Order[];
 }
 
-export function useTrading() {
+export function useTrading(onOrderMatched?: (trade: Trade) => void) {
     const profile = ref<Profile | null>(null);
     const userOrders = ref<Order[]>([]);
     const orderbook = ref<OrderbookData | null>(null);
@@ -190,6 +190,10 @@ export function useTrading() {
                 fetchProfile();
                 fetchUserOrders();
                 fetchOrderbook(selectedSymbol.value);
+                // Call the callback if provided
+                if (onOrderMatched) {
+                    onOrderMatched(data.trade);
+                }
             });
     }
 

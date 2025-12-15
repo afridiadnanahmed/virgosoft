@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -18,7 +19,7 @@ interface Order {
     created_at: string;
 }
 
-defineProps<{
+const props = defineProps<{
     orders: Order[];
     loading: boolean;
 }>();
@@ -26,6 +27,26 @@ defineProps<{
 const emit = defineEmits<{
     cancel: [orderId: number];
 }>();
+
+// Filters
+const filterSymbol = ref<string>('all');
+const filterSide = ref<string>('all');
+const filterStatus = ref<string>('all');
+
+const filteredOrders = computed(() => {
+    return props.orders.filter(order => {
+        if (filterSymbol.value !== 'all' && order.symbol !== filterSymbol.value) {
+            return false;
+        }
+        if (filterSide.value !== 'all' && order.side !== filterSide.value) {
+            return false;
+        }
+        if (filterStatus.value !== 'all' && order.status !== parseInt(filterStatus.value)) {
+            return false;
+        }
+        return true;
+    });
+});
 
 function getStatusLabel(status: number): string {
     switch (status) {
@@ -48,14 +69,70 @@ function getStatusVariant(status: number): 'default' | 'secondary' | 'destructiv
 function formatDate(dateString: string): string {
     return new Date(dateString).toLocaleString();
 }
+
+function clearFilters() {
+    filterSymbol.value = 'all';
+    filterSide.value = 'all';
+    filterStatus.value = 'all';
+}
 </script>
 
 <template>
     <Card>
-        <CardHeader>
+        <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-4">
             <CardTitle>Order History</CardTitle>
+            <Button
+                v-if="filterSymbol !== 'all' || filterSide !== 'all' || filterStatus !== 'all'"
+                variant="ghost"
+                size="sm"
+                @click="clearFilters"
+            >
+                Clear Filters
+            </Button>
         </CardHeader>
         <CardContent>
+            <!-- Filters -->
+            <div class="flex flex-wrap gap-3 mb-4 p-3 bg-muted/50 rounded-lg">
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-muted-foreground">Symbol:</label>
+                    <select
+                        v-model="filterSymbol"
+                        class="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                    >
+                        <option value="all">All</option>
+                        <option value="BTC">BTC</option>
+                        <option value="ETH">ETH</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-muted-foreground">Side:</label>
+                    <select
+                        v-model="filterSide"
+                        class="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                    >
+                        <option value="all">All</option>
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label class="text-sm text-muted-foreground">Status:</label>
+                    <select
+                        v-model="filterStatus"
+                        class="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                    >
+                        <option value="all">All</option>
+                        <option value="1">Open</option>
+                        <option value="2">Filled</option>
+                        <option value="3">Cancelled</option>
+                    </select>
+                </div>
+                <div class="flex items-center text-sm text-muted-foreground ml-auto">
+                    Showing {{ filteredOrders.length }} of {{ orders.length }} orders
+                </div>
+            </div>
+
+            <!-- Orders Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead>
@@ -72,7 +149,7 @@ function formatDate(dateString: string): string {
                     </thead>
                     <tbody>
                         <tr
-                            v-for="order in orders"
+                            v-for="order in filteredOrders"
                             :key="order.id"
                             class="border-b hover:bg-muted/50"
                         >
@@ -107,9 +184,9 @@ function formatDate(dateString: string): string {
                                 </Button>
                             </td>
                         </tr>
-                        <tr v-if="!orders?.length">
+                        <tr v-if="!filteredOrders?.length">
                             <td colspan="8" class="py-8 text-center text-muted-foreground">
-                                No orders yet
+                                {{ orders.length ? 'No orders match the filters' : 'No orders yet' }}
                             </td>
                         </tr>
                     </tbody>
