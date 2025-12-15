@@ -185,7 +185,6 @@ export function useTrading(onOrderMatched?: (trade: Trade) => void) {
 
         window.Echo.private(`user.${userId}`)
             .listen('.order.matched', (data: { trade: Trade; order_id: number }) => {
-                console.log('Order matched:', data);
                 // Refresh all data when an order is matched
                 fetchProfile();
                 fetchUserOrders();

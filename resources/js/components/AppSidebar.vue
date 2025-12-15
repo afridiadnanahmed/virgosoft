@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import {
@@ -24,10 +23,6 @@ const mainNavItems: NavItem[] = [
         icon: TrendingUp,
     },
 ];
-
-const footerNavItems: NavItem[] = [
-
-];
 </script>
 
 <template>
@@ -49,7 +44,6 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
             <NavUser />
         </SidebarFooter>
     </Sidebar>

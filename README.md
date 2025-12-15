@@ -85,6 +85,7 @@ mysql -u root -p -e "CREATE DATABASE virgosoft;"
 
 ```env
 BROADCAST_CONNECTION=pusher
+QUEUE_CONNECTION=sync
 
 PUSHER_APP_ID=your-pusher-app-id
 PUSHER_APP_KEY=your-pusher-app-key
