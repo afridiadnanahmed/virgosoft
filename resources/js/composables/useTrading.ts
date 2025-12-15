@@ -183,9 +183,8 @@ export function useTrading(onOrderMatched?: (trade: Trade) => void) {
     function setupEchoListeners() {
         if (!userId || !window.Echo) return;
 
-        window.Echo.private(`private-user.${userId}`)
+        window.Echo.private(`user.${userId}`)
             .listen('.order.matched', (data: { trade: Trade; order_id: number }) => {
-                console.log('Order matched:', data);
                 // Refresh all data when an order is matched
                 fetchProfile();
                 fetchUserOrders();
@@ -199,7 +198,7 @@ export function useTrading(onOrderMatched?: (trade: Trade) => void) {
 
     function cleanupEchoListeners() {
         if (!userId || !window.Echo) return;
-        window.Echo.leave(`private-user.${userId}`);
+        window.Echo.leave(`user.${userId}`);
     }
 
     onMounted(() => {

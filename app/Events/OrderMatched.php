@@ -25,7 +25,7 @@ class OrderMatched implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('private-user.' . $this->userId),
+            new PrivateChannel('user.' . $this->userId),
         ];
     }
 

@@ -11,7 +11,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
+    return redirect()->route('trading');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('trading', function () {
