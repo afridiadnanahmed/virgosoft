@@ -14,19 +14,20 @@
 - [x] Create Eloquent models with relationships
 
 ## Backend - API Endpoints
-- [ ] `GET /api/profile` - Return user's USD balance + asset balances
-- [ ] `GET /api/orders?symbol=` - Return all open orders for orderbook
-- [ ] `POST /api/orders` - Create a limit order
-- [ ] `POST /api/orders/{id}/cancel` - Cancel order & release locked funds
+- [x] `GET /api/profile` - Return user's USD balance + asset balances
+- [x] `GET /api/orders?symbol=` - Return all open orders for orderbook
+- [x] `POST /api/orders` - Create a limit order
+- [x] `POST /api/orders/{id}/cancel` - Cancel order & release locked funds
+- [x] `GET /api/user/orders` - Return user's order history
 
 ## Backend - Core Business Logic
-- [ ] Implement Buy Order logic (check balance, deduct, lock USD)
-- [ ] Implement Sell Order logic (check assets, lock amount)
-- [ ] Implement Order Matching engine (full match only)
-  - [ ] BUY matches SELL where `sell.price <= buy.price`
-  - [ ] SELL matches BUY where `buy.price >= sell.price`
-- [ ] Implement Commission calculation (1.5% of matched USD value)
-- [ ] Ensure atomic execution & race safety (database transactions/locks)
+- [x] Implement Buy Order logic (check balance, deduct, lock USD)
+- [x] Implement Sell Order logic (check assets, lock amount)
+- [x] Implement Order Matching engine (full match only)
+  - [x] BUY matches SELL where `sell.price <= buy.price`
+  - [x] SELL matches BUY where `buy.price >= sell.price`
+- [x] Implement Commission calculation (1.5% of matched USD value)
+- [x] Ensure atomic execution & race safety (database transactions/locks)
 
 ## Backend - Real-Time Integration
 - [ ] Create `OrderMatched` event
